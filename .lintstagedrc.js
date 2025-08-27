@@ -1,4 +1,10 @@
 module.exports = {
-  '*.{js,jsx,ts,tsx}': ['prettier --write', 'eslint --fix'],
-  '*.{json,md}': ['prettier --write'],
+  // Check TypeScript errors in staged files
+  '*.{ts,tsx}': ['eslint --fix', 'prettier --write'],
+
+  // Check JavaScript files
+  '*.{js,jsx}': ['eslint --fix', 'prettier --write'],
+
+  // Format other files
+  '*.{json,md,yml,yaml}': ['prettier --write'],
 };

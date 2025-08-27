@@ -6,7 +6,6 @@ import {Provider} from 'react-redux';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
-
   return (
     <Provider store={store}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
