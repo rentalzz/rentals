@@ -1,18 +1,20 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {Text, View} from 'react-native';
 
-import {colors, spacing, typography} from '@theme/index';
+import {colors, spacing, fontStyles} from '@theme/index';
+import {ScaledSheet} from 'react-native-size-matters';
 
 const LoginScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>Login Screen</Text>
+        <Text style={styles.subtitle}>Welcome to Real Estate App</Text>
       </View>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   container: {
     backgroundColor: colors.background,
     flex: 1,
@@ -24,9 +26,14 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
   },
   title: {
-    color: colors.text,
-    fontSize: typography.fontSize['3xl'],
-    fontWeight: '700' as const,
+    color: colors.primary,
+    ...fontStyles.heading.h1,
+    textAlign: 'center',
+    marginBottom: spacing.md,
+  },
+  subtitle: {
+    color: colors.textSecondary,
+    ...fontStyles.body.large,
     textAlign: 'center',
   },
 });

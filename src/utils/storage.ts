@@ -54,7 +54,8 @@ export const storage = {
   // Get all keys
   async getAllKeys(): Promise<string[]> {
     try {
-      return await AsyncStorage.getAllKeys();
+      const keys = await AsyncStorage.getAllKeys();
+      return [...keys]; // Convert readonly array to mutable array
     } catch (error) {
       console.error('Error getting storage keys:', error);
       return [];

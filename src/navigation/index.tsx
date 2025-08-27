@@ -1,3 +1,4 @@
+import TypographyExample from '@components/TypographyExample';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import HomeScreen from '@screens/HomeScreen';
@@ -7,6 +8,7 @@ import LoginScreen from '@screens/LoginScreen';
 export type RootStackParamList = {
   Home: undefined;
   Login: undefined;
+  TypographyExample: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -37,6 +39,13 @@ const Navigation = () => {
           component={LoginScreen}
           options={{
             title: 'Login',
+          }}
+        />
+        <Stack.Screen
+          name="TypographyExample"
+          component={TypographyExample}
+          options={{
+            title: 'Typography Examples',
           }}
         />
       </Stack.Navigator>

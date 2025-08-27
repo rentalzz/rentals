@@ -1,13 +1,27 @@
-export const colors = {
-  // Primary colors
-  primary: '#007AFF',
-  primaryDark: '#0056CC',
-  primaryLight: '#4DA3FF',
+import {Dimensions} from 'react-native';
 
-  // Secondary colors
-  secondary: '#5856D6',
-  secondaryDark: '#3634A3',
-  secondaryLight: '#7A79E0',
+const {width, height} = Dimensions.get('window');
+
+// Scaling functions for responsive design
+export const scale = (size: number) => (width / 375) * size;
+export const verticalScale = (size: number) => (height / 812) * size;
+export const moderateScale = (size: number, factor = 0.5) => size + (scale(size) - size) * factor;
+
+export const colors = {
+  // Figma Design Colors from Real Estate App UI Kit
+  primary: '#234F68', // Main blue color from Figma
+  primaryDark: '#1A3D52', // Darker blue
+  primaryLight: '#2D5F7A', // Lighter blue
+
+  // Accent colors from Figma
+  accent: '#8BC83F', // Green accent color from Figma
+  accentLight: '#9ED44A', // Lighter green
+  accentDark: '#7AB339', // Darker green
+
+  // Overlay colors from Figma
+  overlay: 'rgba(33, 98, 138, 0.8)', // Blue overlay from Figma
+  gradientStart: 'rgba(139, 200, 61, 1)', // Green gradient start
+  gradientEnd: 'rgba(141, 255, 0, 1)', // Green gradient end
 
   // Neutral colors
   white: '#FFFFFF',
@@ -33,85 +47,159 @@ export const colors = {
 
   // Background colors
   background: '#FFFFFF',
-  backgroundSecondary: '#F9FAFB',
+  backgroundSecondary: '#F8F9FA',
   surface: '#FFFFFF',
+  surfaceSecondary: '#F8F9FA',
 
   // Text colors
   text: '#1F2937',
   textSecondary: '#6B7280',
   textTertiary: '#9CA3AF',
+  textInverse: '#FFFFFF',
 };
 
 export const typography = {
   fontFamily: {
-    regular: 'System',
-    medium: 'System',
-    bold: 'System',
+    // Lato font family - these names must match the actual font file names
+    thin: 'Lato-Thin',
+    thinItalic: 'Lato-ThinItalic',
+    light: 'Lato-Light',
+    lightItalic: 'Lato-LightItalic',
+    regular: 'Lato-Regular',
+    italic: 'Lato-Italic',
+    medium: 'Lato-Regular', // Lato doesn't have Medium, using Regular
+    mediumItalic: 'Lato-Italic',
+    semibold: 'Lato-Regular', // Lato doesn't have Semibold, using Regular
+    semiboldItalic: 'Lato-Italic',
+    bold: 'Lato-Bold',
+    boldItalic: 'Lato-BoldItalic',
+    black: 'Lato-Black',
+    blackItalic: 'Lato-BlackItalic',
+
+    // Fallback fonts for better cross-platform support
+    fallback: {
+      thin: 'System',
+      light: 'System',
+      regular: 'System',
+      medium: 'System',
+      semibold: 'System',
+      bold: 'System',
+      black: 'System',
+    },
   },
   fontSize: {
-    xs: 12,
-    sm: 14,
-    base: 16,
-    lg: 18,
-    xl: 20,
-    '2xl': 24,
-    '3xl': 30,
-    '4xl': 36,
+    // Exact Figma specifications
+    xs: scale(10), // App version text
+    sm: scale(12), // Small text
+    base: scale(14), // Body text
+    lg: scale(16), // Button text, subtitle
+    xl: scale(18), // Medium text
+    '2xl': scale(20), // Large text
+    '3xl': scale(24), // Heading
+    '4xl': scale(30), // Large heading
+    '5xl': scale(36), // Main title "Rise Real Estate"
+    '6xl': scale(48), // Extra large
   },
-  fontWeight: {
-    normal: '400',
-    medium: '500',
-    semibold: '600',
-    bold: '700',
-  },
+  // Note: fontWeight is not used with custom fonts as it overrides fontFamily
+  // Font weight comes from the font file itself (Lato-Bold.ttf = bold weight)
   lineHeight: {
-    tight: 1.25,
-    normal: 1.5,
-    relaxed: 1.75,
+    // Figma specifications
+    tight: 1.2, // Main title
+    normal: 1.4, // Body text
+    relaxed: 1.6, // Subtitle
+    loose: 1.8, // Large text
+  },
+  letterSpacing: {
+    // Figma specifications - converted to numbers for React Native
+    tight: -0.03, // Main title (-3%)
+    normal: 0,
+    wide: 0.03, // Button text, app version (3%)
   },
 };
 
 export const spacing = {
-  xs: 4,
-  sm: 8,
-  md: 16,
-  lg: 24,
-  xl: 32,
-  '2xl': 48,
-  '3xl': 64,
+  // Exact Figma measurements
+  xs: scale(4),
+  sm: scale(8),
+  md: scale(16),
+  lg: scale(24),
+  xl: scale(32),
+  '2xl': scale(48),
+  '3xl': scale(64),
+  '4xl': scale(80),
+
+  // Figma-specific spacing
+  buttonHeight: scale(54), // Button height from Figma
+  buttonPadding: scale(20), // Button horizontal padding
+  titleMargin: scale(92), // Title horizontal positioning
+  contentPadding: scale(76), // Content area padding
 };
 
 export const borderRadius = {
   none: 0,
-  sm: 4,
-  md: 8,
-  lg: 12,
-  xl: 16,
+  sm: scale(4),
+  md: scale(8),
+  lg: scale(10), // Button border radius from Figma
+  xl: scale(16),
+  '2xl': scale(20),
+  '3xl': scale(24),
+  '4xl': scale(50), // Main container border radius from Figma
   full: 9999,
 };
 
 export const shadows = {
   sm: {
     shadowColor: colors.black,
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: {width: 0, height: scale(1)},
     shadowOpacity: 0.05,
-    shadowRadius: 2,
+    shadowRadius: scale(2),
     elevation: 1,
   },
   md: {
     shadowColor: colors.black,
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: {width: 0, height: scale(2)},
     shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowRadius: scale(4),
     elevation: 3,
   },
   lg: {
     shadowColor: colors.black,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: {width: 0, height: scale(4)},
     shadowOpacity: 0.15,
-    shadowRadius: 8,
+    shadowRadius: scale(8),
     elevation: 5,
   },
+  xl: {
+    shadowColor: colors.black,
+    shadowOffset: {width: 0, height: scale(6)},
+    shadowOpacity: 0.2,
+    shadowRadius: scale(12),
+    elevation: 8,
+  },
+};
+
+// Screen dimensions
+export const screenDimensions = {
+  width,
+  height,
+  isSmallDevice: width < 375,
+  isMediumDevice: width >= 375 && width < 414,
+  isLargeDevice: width >= 414,
+};
+
+// Figma-specific layout constants
+export const layout = {
+  // From Figma design
+  containerWidth: 375,
+  containerHeight: 812,
+  imageWidth: 447, // Background image width
+  imageHeight: 812, // Background image height
+  logoWidth: 223, // Logo mask group width
+  logoHeight: 210, // Logo mask group height
+  buttonWidth: 190, // Button width
+  buttonHeight: 54, // Button height
+  titleWidth: 190, // Title text width
+  titleHeight: 101, // Title text height
 };
 
 export const theme = {
@@ -120,4 +208,12 @@ export const theme = {
   spacing,
   borderRadius,
   shadows,
+  screenDimensions,
+  layout,
+  scale,
+  verticalScale,
+  moderateScale,
 };
+
+// Export fonts utility for easy access
+export * from './fonts';
