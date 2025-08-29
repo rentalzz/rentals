@@ -1,11 +1,10 @@
 import {Dimensions} from 'react-native';
 
+import {scale} from 'react-native-size-matters';
+
 const {width, height} = Dimensions.get('window');
 
-// Scaling functions for responsive design
-export const scale = (size: number) => (width / 375) * size;
-export const verticalScale = (size: number) => (height / 812) * size;
-export const moderateScale = (size: number, factor = 0.5) => size + (scale(size) - size) * factor;
+// Custom scaling functions for @s, @vs, @ms syntax
 
 export const colors = {
   // Figma Design Colors from Real Estate App UI Kit
@@ -88,7 +87,7 @@ export const typography = {
     },
   },
   fontSize: {
-    // Exact Figma specifications
+    // Exact Figma specifications using scale() function
     xs: scale(10), // App version text
     sm: scale(12), // Small text
     base: scale(14), // Body text
@@ -118,7 +117,7 @@ export const typography = {
 };
 
 export const spacing = {
-  // Exact Figma measurements
+  // Exact Figma measurements using scale() function
   xs: scale(4),
   sm: scale(8),
   md: scale(16),
@@ -211,8 +210,6 @@ export const theme = {
   screenDimensions,
   layout,
   scale,
-  verticalScale,
-  moderateScale,
 };
 
 // Export fonts utility for easy access
