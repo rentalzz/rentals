@@ -1,0 +1,484 @@
+# React Native Development Rules & Conventions
+
+## 🎯 Code Organization & Structure
+
+### Component/Screen Guidelines
+
+- **If component/screen >200 lines → extract styles to separate file**
+- **File naming**: `ComponentName.tsx` + `ComponentName.styles.ts`
+- **Import order**: React Native → Third-party → @ aliases → Relative
+- **Component structure**: Functional components with React.FC type annotation
+
+### Style Extraction Rules
+
+```typescript
+// ✅ GOOD: Separate styles file
+// ComponentName.tsx (component logic)
+// ComponentName.styles.ts (all styles)
+
+// ❌ BAD: Inline styles in component
+const styles = StyleSheet.create({...}) // In component file
+```
+
+## 🎨 Styling & Theming Conventions
+
+### ScaledSheet Usage
+
+- **ALWAYS use ScaledSheet from react-native-size-matters for styles**
+- **Use @ syntax for scaling in component styles**:
+  - `@s:24` - for general scaling (replaces scale())
+  - `@vs:80` - for height, margins, padding (replaces verticalScale())
+  - `@ms:8` - for widths, border radius, shadows (replaces moderateScale())
+- **Theme file uses scale() functions** for design system tokens
+
+```typescript
+// ✅ GOOD: Using @ syntax in component styles
+width: '79@ms',
+height: '74@vs',
+borderRadius: '8@ms',
+paddingHorizontal: spacing.lg,
+marginBottom: '32@vs',
+
+// ✅ GOOD: Theme file uses scale() or moderateScale() or vertical scale functions
+fontSize: scale(16),
+padding: scale(24),
+borderRadius: scale(8),
+
+// ❌ BAD: Hardcoded values
+width: 79,
+height: 74,
+borderRadius: 8,
+paddingHorizontal: 24,
+marginBottom: 32,
+
+// ❌ BAD: Old function syntax
+width: moderateScale(79),
+height: verticalScale(74),
+borderRadius: moderateScale(8),
+```
+
+### Typography System
+
+- **Prefer typography tokens, avoid redundant overrides**
+- **Use theme typography system**:
+
+```typescript
+// ✅ GOOD: Using typography tokens
+title: {
+  ...fontStyles.heading.h1,
+  color: colors.text.primary,
+  textAlign: 'center',
+  // No redundant fontSize, lineHeight, fontWeight overrides
+}
+
+// ❌ BAD: Overriding typography tokens
+title: {
+  ...fontStyles.heading.h1,
+  fontSize: 36,        // Redundant - already in heading.h1
+  lineHeight: 43,      // Redundant - already in heading.h1
+  fontWeight: '700',   // Redundant - already in heading.h1
+}
+```
+
+### Color Usage
+
+- **Use theme color tokens when available**
+- **For Figma-specific colors, use hex values with comments**
+- **Follow accessibility guidelines** for color contrast ratios
+
+```typescript
+// ✅ GOOD: Using theme colors
+backgroundColor: colors.primary,
+color: colors.text.primary,
+
+// ✅ GOOD: Figma-specific colors with comments
+backgroundColor: '#8BC83F', // Green color from Figma
+backgroundColor: '#234F68', // Dark blue background from Figma
+
+// ✅ GOOD: Semantic colors
+backgroundColor: colors.success,
+backgroundColor: colors.error,
+backgroundColor: colors.warning,
+```
+
+### Spacing System
+
+- **Use theme spacing tokens when available**
+- **Combine with @ syntax for responsive design**
+- **Maintain consistent spacing scale** throughout the app
+
+```typescript
+// ✅ GOOD: Using theme spacing + @ syntax
+paddingHorizontal: spacing.lg,
+paddingVertical: '@vs:16',
+marginBottom: '@vs:32',
+
+// ✅ GOOD: Using @ syntax directly
+paddingHorizontal: '@ms:24',
+marginTop: '@vs:80',
+```
+
+## 📱 Safe Area & Navigation
+
+### SafeAreaView Replacement
+
+- **Use react-native-safe-area-context instead of deprecated SafeAreaView**
+- **Implement with useSafeAreaInsets hook**:
+
+```typescript
+// ✅ GOOD: Modern safe area handling
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+
+const Component = () => {
+  const insets = useSafeAreaInsets();
+
+  return (
+    <View style={[styles.container, {paddingTop: insets.top}]}>
+      {/* Content */}
+    </View>
+  );
+};
+
+// ❌ BAD: Deprecated SafeAreaView
+import {SafeAreaView} from 'react-native';
+```
+
+### Navigation Best Practices
+
+- **Use React Navigation v6+** for consistent navigation
+- **Implement proper type safety** with TypeScript
+- **Handle navigation state** properly with useNavigation hook
+- **Use screen options** for consistent headers and transitions
+
+## 🎨 Figma Implementation Rules
+
+### Priority Order for Figma Implementation
+
+1. **Spacing & Layout** - Exact positioning and margins
+2. **Typography** - Font sizes, weights, line heights
+3. **Alignment** - Center, left, right positioning
+4. **Theming** - Colors, shadows, gradients
+5. **Visual Effects** - Opacity, blur, shadows
+
+### Figma-Specific Guidelines
+
+- **Background images**: Full screen coverage (no margins)
+- **Element positioning**: Use exact Figma measurements
+- **Color matching**: Use Figma color picker values
+- **Spacing consistency**: Maintain Figma spacing ratios
+- **Responsive scaling**: Apply @ syntax to all measurements
+
+### Background Image Implementation
+
+```typescript
+// ✅ GOOD: Full screen background
+backgroundImage: {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  width: '100%',
+  height: '100%',
+  resizeMode: 'cover',
+}
+
+// ❌ BAD: Fixed dimensions with margins
+backgroundImage: {
+  position: 'absolute',
+  top: 0,
+  left: -65,        // Creates unwanted margins
+  width: 447,        // Fixed width
+  height: 812,       // Fixed height
+}
+```
+
+## 🔧 Development Workflow
+
+### Pre-commit Checks
+
+- **TypeScript compilation**: `npm run type-check`
+- **Linting**: `npm run lint`
+- **Formatting**: `npm run format:check`
+- **All checks**: `npm run check`
+- **Unit tests**: `npm test` (if available)
+
+### File Organization
+
+```
+src/
+├── components/          # Reusable components
+├── screens/            # Screen components
+├── navigation/         # Navigation configuration
+├── theme/              # Design tokens & typography
+├── assets/             # Images, icons, fonts
+├── utils/              # Utility functions
+├── hooks/              # Custom React hooks
+├── services/           # API and external services
+├── types/              # TypeScript type definitions
+└── store/              # State management
+```
+
+### Import Conventions
+
+```typescript
+// 1. React Native imports
+import React from 'react';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+
+// 2. Third-party libraries
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useNavigation} from '@react-navigation/native';
+
+// 3. @ aliases (absolute imports)
+import {colors, spacing, fontStyles} from '@theme/index';
+import {styles} from './ComponentName.styles';
+
+// 4. Relative imports
+import {SomeComponent} from '../components/SomeComponent';
+```
+
+## 🚀 Performance & Best Practices
+
+### Style Optimization
+
+- **Extract common styles** to theme files
+- **Use StyleSheet.create** for performance
+- **Avoid inline styles** in render methods
+- **Group related styles** logically
+- **Use memoization** for expensive style calculations
+
+### Component Structure
+
+```typescript
+// ✅ GOOD: Clean component structure
+const ComponentName: React.FC = () => {
+  // 1. Hooks
+  const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
+
+  // 2. Event handlers
+  const handlePress = useCallback(() => {
+    // Handle press logic
+  }, []);
+
+  // 3. Render
+  return (
+    <View style={styles.container}>
+      {/* Content */}
+    </View>
+  );
+};
+
+// 4. Export
+export default ComponentName;
+```
+
+### Performance Best Practices
+
+- **Use React.memo** for expensive components
+- **Implement useCallback** for event handlers
+- **Use useMemo** for expensive calculations
+- **Avoid creating objects/arrays** in render
+- **Implement proper list virtualization** for long lists
+
+## 📋 Code Review Checklist
+
+### Before Committing
+
+- [ ] Component <200 lines or styles extracted
+- [ ] Using @ syntax for responsive scaling in component styles
+- [ ] Theme file uses scale() functions for design tokens
+- [ ] Typography tokens used (no redundant overrides)
+- [ ] SafeAreaView replaced with react-native-safe-area-context
+- [ ] Figma spacing and positioning implemented
+- [ ] No hardcoded dimensions without @ scaling
+- [ ] All linting errors resolved
+- [ ] TypeScript compilation successful
+- [ ] Performance optimizations implemented
+- [ ] Accessibility considerations addressed
+
+### Figma Implementation Checklist
+
+- [ ] Background image covers full screen
+- [ ] Element positioning matches Figma
+- [ ] Spacing between elements correct
+- [ ] Typography matches design
+- [ ] Colors match Figma values
+- [ ] Button positioning correct
+- [ ] Gradient effects implemented
+- [ ] Visual hierarchy maintained
+- [ ] Touch targets meet minimum 44x44 requirement
+
+## 🎯 Scaling Guidelines
+
+### @ Syntax Usage in Component Styles
+
+- **General scaling**: `@s:24`, `@s:16`, `@s:8` (replaces scale())
+- **Vertical scaling**: `@vs:80`, `@vs:32`, `@vs:16` (replaces verticalScale())
+- **Moderate scaling**: `@ms:8`, `@ms:4`, `@ms:2` (replaces moderateScale())
+- **Consistent values**: Use same @ values for similar spacing patterns
+- **Avoid mixing**: Don't mix @ syntax with hardcoded values in same component
+
+### Theme File Scaling Functions
+
+- **Use scale() functions** for design system tokens
+- **Keep theme values** as computed numbers
+
+### Common @ Values
+
+```typescript
+// Spacing scale
+'@vs:4'; // Very small spacing
+'@vs:8'; // Small spacing
+'@vs:16'; // Medium spacing
+'@vs:24'; // Large spacing
+'@vs:32'; // Extra large spacing
+'@vs:40'; // Section spacing
+'@vs:80'; // Large section spacing
+
+// Component sizes
+'@ms:8'; // Border radius
+'@vs:16'; // Button height
+'@ms:120'; // Logo size
+'@ms:79'; // Container width
+'@vs:74'; // Container height
+```
+
+### Theme Integration
+
+```typescript
+// ✅ GOOD: Combine theme spacing with @ syntax
+paddingHorizontal: spacing.lg,
+paddingVertical: '@vs:16',
+marginBottom: '@vs:32',
+
+// ✅ GOOD: Use @ syntax for Figma-specific measurements
+width: '@ms:79',      // From Figma design
+height: '@vs:74',     // From Figma design
+borderRadius: '@ms:8', // From Figma design
+```
+
+## 🔍 Code Quality Standards
+
+### Style Consistency
+
+- **Always use @ syntax** for dimensions, spacing, and positioning in component styles
+- **Use scale() functions** in theme file for design tokens
+- **Prefer theme tokens** over hardcoded values
+- **Group related styles** logically (layout, typography, effects)
+- **Use meaningful names** for style objects
+- **Maintain consistent naming conventions**
+
+### Performance Considerations
+
+- **Extract styles** to separate files for components >200 lines
+- **Use StyleSheet.create** for all style definitions
+- **Avoid inline styles** in render methods
+- **Minimize style recalculations** by using stable references
+- **Implement proper memoization** strategies
+
+### Accessibility
+
+- **Use semantic colors** from theme when available
+- **Maintain proper contrast ratios** for text readability
+- **Consider touch target sizes** (minimum 44x44 points)
+- **Use appropriate text scaling** for different device sizes
+- **Implement proper accessibility labels** and hints
+- **Support screen readers** with proper accessibility props
+
+## 🎨 Design System Guidelines
+
+### Color Architecture
+
+- **Start with hardcoded colors** for MVP development
+- **Audit all screens** to identify common color patterns
+- **Create comprehensive color system** based on actual usage
+- **Refactor existing screens** to use new theme colors
+- **Document color usage** and guidelines
+- **Implement dark mode support** from the beginning
+
+### Typography Hierarchy
+
+- **Use consistent font scales** across all components
+- **Maintain visual hierarchy** with proper font weights
+- **Avoid font size overrides** when using typography tokens
+- **Consider accessibility** with minimum readable sizes
+- **Implement proper line heights** for readability
+
+### Spacing Consistency
+
+- **Use consistent spacing scale** throughout the app
+- **Combine theme spacing** with responsive @ syntax
+- **Maintain visual rhythm** between elements
+- **Consider device density** variations
+- **Implement responsive breakpoints** for different screen sizes
+
+## 🚀 Development Phases
+
+### Phase 1: MVP Development (Current)
+
+- ✅ **Keep hardcoded colors** for onboarding screens
+- ✅ **Focus on functionality** and layout accuracy
+- ✅ **Use @ syntax** for responsive design in component styles
+- ✅ **Use scale() functions** in theme file for design tokens
+- ✅ **Extract styles** for components >200 lines
+- ✅ **Implement basic navigation** and routing
+
+### Phase 2: Design System (Future)
+
+- 🔍 **Analyze all screens** for color patterns
+- 🎨 **Create comprehensive theme** system
+- 🔄 **Refactor existing screens** to use theme
+- 📚 **Document design system** guidelines
+- 🌙 **Implement dark mode** support
+- 📱 **Add responsive breakpoints** for tablets
+
+### Phase 3: Optimization (Future)
+
+- ⚡ **Performance optimization** of styles
+- 🎯 **Accessibility improvements**
+- 🔧 **Code quality enhancements**
+- 📱 **Cross-platform consistency**
+- 🧪 **Add comprehensive testing** suite
+- 📊 **Implement analytics** and monitoring
+
+## 🔧 Global React Native Best Practices
+
+### State Management
+
+- **Use React Context** for simple state
+- **Implement Redux Toolkit** for complex state
+- **Use Zustand** for lightweight state management
+- **Implement proper error boundaries**
+
+### Error Handling
+
+- **Implement error boundaries** for component error catching
+- **Use try-catch blocks** for async operations
+- **Implement proper error logging** and reporting
+- **Provide user-friendly error messages**
+
+### Testing Strategy
+
+- **Unit tests** for utility functions and hooks
+- **Component tests** using React Native Testing Library
+- **Integration tests** for critical user flows
+- **E2E tests** for complete user journeys
+
+### Security Best Practices
+
+- **Validate all user inputs** before processing
+- **Implement proper authentication** flows
+- **Use secure storage** for sensitive data
+- **Implement certificate pinning** for API calls
+- **Regular security audits** of dependencies
+
+## Project Overview
+
+This project is a **mobile-first property broker app**.  
+It is designed for **apartment/flat brokers** who often rely on WhatsApp or informal channels to share property details.
+
+- **For Brokers**:
+  - Register/Login to the app.
+  - Upload property details including photos, price, location, and description.
+  - Manage their own listings in a simple dashboard.
+  - Each property generates a **unique shareable link** that they can send to potential customers.
